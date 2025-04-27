@@ -46,8 +46,9 @@ pair<int,int> findCoord(){
 }
 
 void dfs(int c_cnt){
+    int sum=25-accumulate(square.begin(),square.end(),0);
+    if(sum>Min)return;
     if(c_cnt==coords.size()){
-        int sum=25-accumulate(square.begin(),square.end(),0);
         Min=min(Min,sum);
         return;
     }
