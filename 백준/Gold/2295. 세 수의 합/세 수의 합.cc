@@ -26,7 +26,7 @@ int main() {
 	sort(u.begin(), u.end());
 
 	for (int i = N - 1; i >= 0; i--) {
-		for (int j = i; j >= 0; j--) {
+		for (int j = 0; j <= i; j++) {
 			int diff = u[i] - u[j];
 			if (sum[diff] >= 1) {
 				cout << u[i];
