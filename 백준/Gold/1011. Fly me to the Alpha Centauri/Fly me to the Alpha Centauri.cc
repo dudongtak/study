@@ -14,8 +14,6 @@ int main(){
         t--;
         cin>>s>>e;
 
-        int cnt=0;
-
         int size=e-s;
         int s=sqrt(size);
         int m=(pow(s,2)+pow(s+1,2))/2;
