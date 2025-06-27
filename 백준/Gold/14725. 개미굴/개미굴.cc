@@ -1,46 +1,32 @@
 #include<iostream>
-#include<map>
-#include<vector>
+#include<algorithm>
+#include<set>
 #include<string>
 using namespace std;
-
-struct Node{
-    map<string,Node*> child;
-};
-
-void dfs(Node* node,int l){
-    for(auto c:node->child){
-        for(int i=0;i<l;i++){
-            cout<<"--";
-        }
-        cout<<c.first<<"\n";
-        dfs(c.second,l+1);
-    }
-}
 
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int N;
+    int N,n;
     cin>>N;
-
-    Node* root=new Node();
-
+    set<string> s;
     while(N--){
-        int k;
-        cin>>k;
-        vector<string> arr(k);
+        string tmp,str;
+        cin>>n;
 
-        for(int i=0;i<k;i++)cin>>arr[i];
-    
-        Node* tmp=root;
-
-        for(const auto& str:arr){
-            if(tmp->child.count(str)==0)tmp->child[str]=new Node();
-            tmp=tmp->child[str];
+        while(n--){
+            cin>>tmp;
+            str+=' '+tmp;
+            s.insert(str);
         }
     }
+    for(const auto& str:s){
+        int cnt=count(str.begin(),str.end(),' ');
+        int idx=str.find_last_of(' ');
+        string answer=str.substr(idx+1);
 
-    dfs(root,0);
+        for(int i=0;i<2*(cnt-1);i++)cout<<'-';
+        cout<<answer<<"\n";
+    }
 }
