@@ -4,11 +4,6 @@
 #include<vector>
 using namespace std;
 
-char op[]={'D','S','L','R'};
-//D는 2배 후 9999넘으면 %10000
-//S는 n-1 만약 n이 0이면 9999
-//L은 왼쪼긍로 회전
-//R은 오른쪽으로 회전
 int T;
 
 int opD(int n){
