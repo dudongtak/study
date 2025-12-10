@@ -6,7 +6,7 @@ using namespace std;
 int c;
 int Max=-1;
 
-void dfs(vector<int> &r,int idx,vector<vector<int>> &p,vector<bool> v,int sum){
+void dfs(int idx,vector<vector<int>> &p,vector<bool> &v,int sum){
     if(idx>=11){
         Max=max(Max,sum);
         return;
@@ -14,8 +14,7 @@ void dfs(vector<int> &r,int idx,vector<vector<int>> &p,vector<bool> v,int sum){
     for(int i=0;i<11;i++){
         if(p[i][idx]==0||v[i])continue;
         v[i]=true;
-        r[idx]=p[i][idx];
-        dfs(r,idx+1,p,v,sum+r[idx]);
+        dfs(idx+1,p,v,sum+p[i][idx]);
         v[i]=false;
     }
 }
@@ -30,9 +29,8 @@ int main(){
         vector<vector<int>> pos(11,vector<int>(11));
         for(int i=0;i<11;i++)for(int j=0;j<11;j++)cin>>pos[i][j];
 
-        vector<int> roster(11,0);
         vector<bool> visit(11,false);
-        dfs(roster,0,pos,visit,0);
+        dfs(0,pos,visit,0);
         cout<<Max<<"\n";
         Max=-1;
     }
