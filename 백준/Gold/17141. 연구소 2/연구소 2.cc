@@ -52,7 +52,7 @@ int main() {
 		while (!check(copy)) {
 			cnt++;
 			int qsize = q.size();
-			if (qsize == 0) {
+			if (qsize == 0 || cnt >= Min) {
 				flag = false;
 				break;
 			}
