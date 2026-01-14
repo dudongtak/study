@@ -1,9 +1,7 @@
 #include<iostream>
-#include<algorithm>
 #include<vector>
 #include<queue>
 #include<string>
-#define INF 1e9;
 using namespace std;
 
 int t,w,h;
@@ -20,7 +18,6 @@ int main(){
         pii s;
         queue<pii> fq;
         cin>>w>>h;
-        int Min=w*h;
         vector<string> board(h);
         for(int i=0;i<h;i++){
             cin>>board[i];
