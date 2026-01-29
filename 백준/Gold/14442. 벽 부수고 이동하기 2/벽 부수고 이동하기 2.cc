@@ -1,58 +1,66 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<string>
-#include<queue>
-#define INF 1e9
+#include <bits/stdc++.h>
 using namespace std;
+
+struct Coord {
+    int x, y, crash;
+};
 
 int n, m, k;
 vector<string> board;
-typedef struct coord {
-	int x, y, crash;
-}coord;
-int dx[] = { 1,-1,0,0 };
-int dy[] = { 0,0,1,-1 };
+int dx[4] = {1, -1, 0, 0};
+int dy[4] = {0, 0, 1, -1};
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(NULL);
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
 
-	cin >> n >> m >> k;
-	board.resize(n);
-	for (int i = 0; i < n; i++)cin >> board[i];
-	vector<vector<vector<int>>> dis(n, vector<vector<int>>(m, vector<int>(k + 1, INF)));
-	dis[0][0][0] = 1;
-	queue<coord> q;
-	q.push({ 0,0,0 });
+    cin >> n >> m >> k;
+    board.resize(n);
+    for (int i = 0; i < n; i++) cin >> board[i];
 
-	while (!q.empty()) {
-		int x = q.front().x;
-		int y = q.front().y;
-		int c = q.front().crash;
-		q.pop();
+    vector<vector<vector<bool>>> visited(
+        n, vector<vector<bool>>(m, vector<bool>(k + 1, false))
+    );
 
-		for (int i = 0; i < 4; i++) {
-			int nx = x + dx[i];
-			int ny = y + dy[i];
-			if (nx < 0 || ny < 0 || nx >= n || ny >= m)continue;
-			if (board[nx][ny] == '1') {
-				if (c >= k)continue;
-				if (dis[nx][ny][c + 1] > dis[x][y][c] + 1) {
-					dis[nx][ny][c + 1] = dis[x][y][c] + 1;
-					q.push({ nx,ny,c + 1 });
-				}
-			}
-			else {
-				if (dis[nx][ny][c] > dis[x][y][c] + 1) {
-					dis[nx][ny][c] = dis[x][y][c] + 1;
-					q.push({ nx,ny,c });
-				}
-			}
-		}
-	}
-	int answer = INF;
-	for (int i = 0; i <= k; i++)answer = min(answer, dis[n - 1][m - 1][i]);
-	if (answer == INF)cout << -1;
-	else cout << answer;
+    queue<Coord> q;
+    visited[0][0][0] = true;
+    q.push({0, 0, 0});
+
+    int dist = 1;
+
+    while (!q.empty()) {
+        int sz = q.size();
+        while (sz--) {
+            auto [x, y, c] = q.front();
+            q.pop();
+
+            if (x == n - 1 && y == m - 1) {
+                cout << dist;
+                return 0;
+            }
+
+            for (int d = 0; d < 4; d++) {
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+
+                if (nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
+
+                if (board[nx][ny] == '1') {
+                    if (c < k && !visited[nx][ny][c + 1]) {
+                        visited[nx][ny][c + 1] = true;
+                        q.push({nx, ny, c + 1});
+                    }
+                } else {
+                    if (!visited[nx][ny][c]) {
+                        visited[nx][ny][c] = true;
+                        q.push({nx, ny, c});
+                    }
+                }
+            }
+        }
+        dist++;
+    }
+
+    cout << -1;
+    return 0;
 }
