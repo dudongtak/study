@@ -10,7 +10,7 @@ vector<int> depth(50001);
 
 int n,m,a,b;
 
-int LAC(int a,int b){
+int LCA(int a,int b){
     if(depth[a]>depth[b])swap(a,b);
     while(depth[a]!=depth[b])b=parent[b];
 
@@ -52,6 +52,6 @@ int main(){
     cin>>m;
     while(m--){
         cin>>a>>b;
-        cout<<LAC(a,b)<<'\n';
+        cout<<LCA(a,b)<<'\n';
     }
 }
