@@ -6,6 +6,9 @@ using namespace std;
 
 int t,n,d,c,a,b,s;
 typedef pair<int,int> pii;
+vector<vector<pii>> com(10000);
+vector<int> dis;
+priority_queue<pii,vector<pii>,greater<>> pq;
 
 int main(){
     ios::sync_with_stdio(false);
@@ -14,11 +17,11 @@ int main(){
     cin>>t;
     while(t--){
         cin>>n>>d>>c;
-        vector<vector<pii>> com(n);
 
+        for(int i=0;i<n;i++)com[i].clear();
+        dis.assign(n,1e9);
+        pq=priority_queue<pii,vector<pii>,greater<>>();
         int cnt=0,time=-1;
-        vector<int> dis(n,1e9);
-        priority_queue<pii,vector<pii>,greater<>> pq;
         pq.push({0,c-1});
         dis[c-1]=0;
 
