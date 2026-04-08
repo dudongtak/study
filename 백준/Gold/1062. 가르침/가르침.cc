@@ -1,70 +1,64 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<string>
-#include<map>
+#include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
-int N, K;
-string str;
-vector<bool> alpha(26);
-vector<string> sv;
-int Max = 0;
+int n, k;
+vector<int> words;
+int answer = 0;
 
-int canRead() {
-	bool read;
-	int cnt = 0;
-	for (int i = 0; i < sv.size(); i++) {
-		read = true;
-		str = sv[i];
-		for (int j = 0; j < str.size(); j++) {
-			if (!alpha[str[j] - 'a']) {
-				read = false;
-				break;
-			}
-		}
-		if (read)cnt++;
-	}
-	return cnt;
-}
+void dfs(int idx, int cnt, int learned) {
+    if (cnt == k) {
+        int readable = 0;
+        for (int word : words) {
+            if ((word & learned) == word) readable++;
+        }
+        answer = max(answer, readable);
+        return;
+    }
 
-void dfs(int idx,int cnt) {
-	if (cnt == K) {
-		Max = max(Max, canRead());
-		return;
-	}
-
-	for (int i = idx; i < 26; i++) {
-		if (alpha[i])continue;
-		alpha[i] = true;
-		dfs(i, cnt + 1);
-		alpha[i] = false;
-	}
+    for (int i = idx; i < 26; i++) {
+        if (learned & (1 << i)) continue;
+        dfs(i + 1, cnt + 1, learned | (1 << i));
+    }
 }
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(NULL);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-	cin >> N >> K;
+    cin >> n >> k;
 
-	for (int i = 0; i < N; i++) {
-		cin >> str;
-		sv.push_back(str);
-	}
+    if (k < 5) {
+        cout << 0;
+        return 0;
+    }
 
-	if (K < 5) {
-		cout << 0;
-		return 0;
-	}
+    if (k == 26) {
+        cout << n;
+        return 0;
+    }
 
-	alpha[0] = true;
-	alpha['n' - 'a'] = true;
-	alpha['t' - 'a'] = true;
-	alpha['i' - 'a'] = true;
-	alpha['c' - 'a'] = true;
-	K -= 5;
-	dfs(0, 0);
+    for (int i = 0; i < n; i++) {
+        string s;
+        cin >> s;
 
-	cout << Max;
+        int mask = 0;
+        for (int j = 4; j < (int)s.size() - 4; j++) {
+            mask |= (1 << (s[j] - 'a'));
+        }
+        words.push_back(mask);
+    }
+
+    int learned = 0;
+    learned |= (1 << ('a' - 'a'));
+    learned |= (1 << ('n' - 'a'));
+    learned |= (1 << ('t' - 'a'));
+    learned |= (1 << ('i' - 'a'));
+    learned |= (1 << ('c' - 'a'));
+
+    dfs(0, 5, learned);
+
+    cout << answer;
+    return 0;
 }
