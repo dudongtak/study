@@ -1,65 +1,99 @@
 #include <string>
 #include <vector>
-
+#include<queue>
+#include<iostream>
 using namespace std;
-int dx[]={0,0,1,-1};
-int dy[]={1,-1,0,0};
-int re[]={1,0,3,2};
-int n,m,answer=0;
-int nd[4][4]={
-    {1,0,7,4},
-    {0,1,6,5},
-    {5,4,2,0},
-    {6,7,0,2}
-};
 
-void dfs(int x,int y, int d,vector<vector<int>> &ori,vector<vector<int>> &tmp){
-    if(tmp[x][y]!=0&&tmp[x][y]!=1&&tmp[x][y]!=2)return;
-    
-    if(x==n-1&&y==m-1){
-        int check=0;
-        for(int i=0;i<n;i++)for(int j=0;j<m;j++){
-            if(ori[i][j]!=0&&ori[i][j]!=-1&&ori[i][j]!=tmp[i][j]){
-                if(i==n-1&&j==m-1){
-                    if((ori[i][j]==1&&d!=0)||(ori[i][j]==2&&d!=2))check++;
-                }
-                else check++;
-            }
+typedef pair<int,int> pii;
+//up,left,down,right 1,2,3,4
+int n,m;
+int last;
+vector<vector<int>> visit(8,vector<int>(8,0));
+
+bool check(vector<vector<int>> &board){
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(board[i][j]!=3&&board[i][j]>=1&&board[i][j]<=7&&visit[i][j]!=1)return false;
+            if(board[i][j]==3&&visit[i][j]<2)return false;
         }
-        if(check==0)answer++;
+    }
+    return true;
+}
+
+void dfs(vector<vector<int>> &board,int dir,int x,int y,int &answer){
+    if(x==n-1&&y==m-1){
+        if((last==1&&dir==4)||(last==2&&dir==3)){
+            visit[x][y]++;
+            if(check(board))answer++;
+            visit[x][y]--;
+        }
         return;
     }
     
-    for(int i=0;i<4;i++){
-        if(re[d]==i)continue;
-        
-        int nx=dx[i]+x;
-        int ny=dy[i]+y;
-        int rail=nd[d][i];
-        int num=tmp[x][y];
-        
-        if(nx<0||nx>=n||ny<0||ny>=m)continue;
-        if(ori[x][y]!=rail&&ori[x][y]!=0&&!(ori[x][y]==3&&(rail==1||rail==2)))continue;
-        if(ori[nx][ny]==-1)continue;
-        
-        if(tmp[x][y]==1||tmp[x][y]==2){
-            if(rail==1||rail==2)tmp[x][y]=3;
-            else continue;
-        }else{
-            tmp[x][y]=rail;
-        }
-        dfs(nx,ny,i,ori,tmp);
-        tmp[x][y]=num;
+    if(x<0||y<0||x>=n||y>=m)return;
+    int rail=board[x][y];
+    if(rail==-1)return;
+    
+    if(rail!=0&&rail!=3){
+        if(visit[x][y])return;
+        visit[x][y]++;
+        if(rail==1){if(dir==4)dfs(board,4,x,y+1,answer);if(dir==2)dfs(board,2,x,y-1,answer);}
+        if(rail==2){if(dir==1)dfs(board,1,x-1,y,answer);if(dir==3)dfs(board,3,x+1,y,answer);}
+        if(rail==4){if(dir==4)dfs(board,1,x-1,y,answer);if(dir==3)dfs(board,2,x,y-1,answer);}
+        if(rail==5){if(dir==3)dfs(board,4,x,y+1,answer);if(dir==2)dfs(board,1,x-1,y,answer);}
+        if(rail==6){if(dir==1)dfs(board,4,x,y+1,answer);if(dir==2)dfs(board,3,x+1,y,answer);}
+        if(rail==7){if(dir==1)dfs(board,2,x,y-1,answer);if(dir==4)dfs(board,3,x+1,y,answer);}
+        visit[x][y]--;
+        return;
     }
+    if(rail==3){
+        if(visit[x][y]==2)return;
+        visit[x][y]++;
+        if(dir==1)dfs(board,1,x-1,y,answer);
+        if(dir==2)dfs(board,2,x,y-1,answer);
+        if(dir==3)dfs(board,3,x+1,y,answer);
+        if(dir==4)dfs(board,4,x,y+1,answer);
+        visit[x][y]--;
+        return;
+    }
+    if(visit[x][y]!=0)return;
+    visit[x][y]++;
+    if(dir==1){
+        board[x][y]=2;dfs(board,1,x-1,y,answer);
+        board[x][y]=3;dfs(board,1,x-1,y,answer);
+        board[x][y]=6;dfs(board,4,x,y+1,answer);
+        board[x][y]=7;dfs(board,2,x,y-1,answer);
+    }
+    if(dir==2){
+        board[x][y]=1;dfs(board,2,x,y-1,answer);
+        board[x][y]=3;dfs(board,2,x,y-1,answer);
+        board[x][y]=5;dfs(board,1,x-1,y,answer);
+        board[x][y]=6;dfs(board,3,x+1,y,answer);
+    }
+    if(dir==3){
+        board[x][y]=2;dfs(board,3,x+1,y,answer);
+        board[x][y]=3;dfs(board,3,x+1,y,answer);
+        board[x][y]=4;dfs(board,2,x,y-1,answer);
+        board[x][y]=5;dfs(board,4,x,y+1,answer);
+    }
+    if(dir==4){
+        board[x][y]=1;dfs(board,4,x,y+1,answer);
+        board[x][y]=3;dfs(board,4,x,y+1,answer);
+        board[x][y]=4;dfs(board,1,x-1,y,answer);
+        board[x][y]=7;dfs(board,3,x+1,y,answer);
+    }
+    visit[x][y]--;
+    board[x][y]=0;
+    return;
 }
 
 int solution(vector<vector<int>> grid) {
+    int answer = 0;
     n=grid.size();
     m=grid[0].size();
+    last=grid[n-1][m-1];
+    visit[0][0]=1;
+    dfs(grid,4,0,1,answer);
     
-    vector<vector<int>> tmp(n,vector<int>(m,0));
-    tmp[0][0]=1;
-    
-    dfs(0,1,0,grid,tmp);
     return answer;
 }
